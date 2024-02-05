@@ -56,35 +56,35 @@ int main()
 
     sort(arr, arr + n, compareByArrivalTime);
 
-    queue<process> ready_queue;
+    queue<int> ready_queue;
 
     int current_time = arr[0].arrival_time;
     int j = 1;
-    ready_queue.push(arr[0]);
-    process p2;
+    ready_queue.push(0);
+    int p2;
     while (ready_queue.size() != 0)
     {
-        if (ready_queue.front().burst_time > tq)
+        if (arr[ready_queue.front()].burst_time > tq)
         {
             current_time += tq;
-            ready_queue.front().burst_time -= tq;
-            p2 = ready_queue.front();
+            arr[ready_queue.front()].burst_time -= tq;
+            process p2 = arr[ready_queue.front()]; // Change the variable type from int to process
         }
 
         else
         {
-            current_time += min(tq, ready_queue.front().burst_time);
-            ready_queue.front().burst_time = 0;
+            current_time += min(tq, arr[ready_queue.front()].burst_time);
+            arr[ready_queue.front()].burst_time = 0;
         }
         for (int i = j; i < n; i++)
         {
             if (arr[i].arrival_time <= current_time && arr[i].burst_time > 0)
             {
-                ready_queue.push(arr[i]);
+                ready_queue.push(i);
                 j = i + 1;
             }
         }
-        if (ready_queue.front().burst_time > 0)
+        if (arr[ready_queue.front()].burst_time > 0)
         {
             p2 = ready_queue.front();
             ready_queue.pop();
@@ -92,9 +92,9 @@ int main()
         }
         else
         {
-            ready_queue.front().completion_time = current_time;
-            ready_queue.front().turn_around_time = (current_time - ready_queue.front().arrival_time);
-            ready_queue.front().waiting_time = (ready_queue.front().turn_around_time - ready_queue.front().init_burst_time);
+            arr[ready_queue.front()].completion_time = current_time;
+            arr[ready_queue.front()].turn_around_time = (current_time - arr[ready_queue.front()].arrival_time);
+            arr[ready_queue.front()].waiting_time = (arr[ready_queue.front()].turn_around_time - arr[ready_queue.front()].init_burst_time);
             ready_queue.pop();
         }
     }
